@@ -44,132 +44,17 @@ architecture Testbench of UART_Reg_tb is
 		);
 	end component;
 
-	signal clk	: in  STD_LOGIC;
-	signal en	: in  STD_LOGIC;
-	signal load	: in  STD_LOGIC;
-	signal byte_in	: in  STD_LOGIC_VECTOR ( 7 downto  0 );
-	signal bit_out	: out STD_LOGIC;
-	signal idle	: out STD_LOGIC;
+	signal clk	: STD_LOGIC;
+	signal en	: STD_LOGIC;
+	signal load	: STD_LOGIC;
+	signal byte_in	: STD_LOGIC_VECTOR ( 7 downto  0 );
+	signal bit_out	: STD_LOGIC;
+	signal idle	: STD_LOGIC;
 
 	-- timing constatnts
 	constant INERTIAL_TIME : time := 50 ns;
-	constant HANG_TIME     : time := 5 ns
+	constant HANG_TIME     : time := 5 ns;
 
-
-	-- function to test against a string of variables (condenses code)
-	function Test_Output ( Data : STD_LOGIC_VECTOR ( 7 downto 0 ) )
-				return STD_LOGIC is
-				variable Result : STD_LOGIC;
-	begin
-	Result <= '0';
-      clk <= '0';
-      en <= '0';
-      load <= '0';
-      byte_in <= Data;
-      load <= '1';
-      clk <= '1';
-		wait for INERTIAL_TIME;
-		clk <= '0';
-      wait for INERTIAL_TIME;
-      load <= '0';
-      
-      en <= '1';
-
-      clk <= '1';
-      wait for INERTIAL_TIME;
-      clk <= '0';
-      wait for INERTIAL_TIME;
-      if ( bit_out != '0' ) then
-         report "UART Start Bit Error." severity error;
-	 Result = '1';
-      end if;
-
-      clk <= '1';
-      wait for INERTIAL_TIME;
-      clk <= '0';
-      wait for INERTIAL_TIME;
-      if ( bit_out != Data[0] ) then
-         report "UART Data[0]." severity error;
-	 Result = '1';
-      end if;
-
-      clk <= '1';
-      wait for INERTIAL_TIME;
-      clk <= '0';
-      wait for INERTIAL_TIME;
-      if ( bit_out != Data[1] ) then
-         report "UART Data[1] Error." severity error;
-	 result = '1';
-      end if;
-
-      clk <= '1';
-      wait for INERTIAL_TIME;
-      clk <= '0';
-      wait for INERTIAL_TIME;
-      if ( bit_out != Data[2] ) then
-         report "UART Data[2] Error." severity error;
-	 Result <= '1';
-      end if;
-
-      clk <= '1';
-      wait for INERTIAL_TIME;
-      clk <= '0';
-      wait for INERTIAL_TIME;
-      if ( bit_out != Data[3] ) then
-         report "UART Data[3] Error." severity error;
-	 Result <= '1';
-      end if;
-
-      clk <= '1';
-      wait for INERTIAL_TIME;
-      clk <= '0';
-      wait for INERTIAL_TIME;
-      if ( bit_out != Data[4] ) then
-         report "UART Data[4] Error." severity error;
-	 Result <= '1';
-      end if;
-
-      clk <= '1';
-      wait for INERTIAL_TIME;
-      clk <= '0';
-      wait for INERTIAL_TIME;
-      if ( bit_out != Data[5] ) then
-         report "UART Data[5] Error." severity error;
-	 Result <= '1';
-      end if;
-
-      clk <= '1';
-      wait for INERTIAL_TIME;
-      clk <= '0';
-      wait for INERTIAL_TIME;
-      if ( bit_out != Data[6] ) then
-         report "UART Data[6] Error." severity error;
-	 Result <= '1';
-      end if;
-
-      clk <= '1';
-      wait for INERTIAL_TIME;
-      clk <= '0';
-      wait for INERTIAL_TIME;
-      if ( bit_out != Data[7] ) then
-         report "UART Data[7] Error." severity error;
-	 Result <= '1';
-      end if;
-
-      clk <= '1';
-      wait for INERTIAL_TIME;
-      clk <= '0';
-      wait for INERTIAL_TIME;
-      if ( bit_out != '1' ) then
-         report "UART End Flag Error." severity error;
-	 Result <= '1';
-      end if;
-
-      if ( Result = '0' ) then
-	 report "UART Test successful with data " & Data severity note;
-	end if;
-
-	return Result;
 
 begin
 
@@ -342,7 +227,7 @@ begin
 		clk <= '0';
 		wait for INERTIAL_TIME;
 		if ( bit_out != '1' ) then
-			report "test enable: UART bit 0 error." severity error;
+			report "test 1-byt transmission: UART bit 0 error" severity error;
 		end if;
 
 		clk <= '1';
@@ -350,7 +235,7 @@ begin
 		clk <= '0';
 		wait for INERTIAL_TIME;
 		if ( bit_out != '0' ) then
-			report "test enable: UART bit 1 error." severity error;
+			report "test 1-byt transmission: UART bit 1 error" severity error;
 		end if;
 	
 		clk <= '1';
@@ -358,7 +243,7 @@ begin
 		clk <= '0';
 		wait for INERTIAL_TIME;
 		if ( bit_out != '1' ) then
-			report "test enable: UART bit 2 error." severity error;
+			report "test 1-byt transmission: UART bit 2 error" severity error;
 		end if;
 
 		clk <= '1';
@@ -366,7 +251,7 @@ begin
 		clk <= '0';
 		wait for INERTIAL_TIME;
 		if ( bit_out != '0' ) then
-			report "test enable: UART bit 3 error." severity error;
+			report "test 1-byt transmission: UART bit 3 error" severity error;
 		end if;
 
 		clk <= '1';
@@ -374,7 +259,7 @@ begin
 		clk <= '0';
 		wait for INERTIAL_TIME;
 		if ( bit_out != '0' ) then
-			report "test enable: UART bit 4 error." severity error;
+			report "test 1-byt transmission: UART bit 4 error" severity error;
 		end if;
 	
 		clk <= '1';
@@ -382,7 +267,7 @@ begin
 		clk <= '0';
 		wait for INERTIAL_TIME;
 		if ( bit_out != '1' ) then
-			report "test enable: UART bit 5 error." severity error;
+			report "test 1-byt transmission: UART bit 5 error" severity error;
 		end if;
 
 		clk <= '1';
@@ -390,7 +275,7 @@ begin
 		clk <= '0';
 		wait for INERTIAL_TIME;
 		if ( bit_out != '0' ) then
-			report "test enable: UART bit 6 error." severity error;
+			report "test 1-byt transmission: UART bit 6 error" severity error;
 		end if;
 
 		clk <= '1';
@@ -398,7 +283,7 @@ begin
 		clk <= '0';
 		wait for INERTIAL_TIME;
 		if ( bit_out != '1' ) then
-			report "test enable: UART bit 7 error." severity error;
+			report "test 1-byt transmission: UART bit 7 error" severity error;
 		end if;
 	
 		clk <= '1';
@@ -406,7 +291,7 @@ begin
 		clk <= '0';
 		wait for INERTIAL_TIME;
 		if ( bit_out != '1' ) then
-			report "test enable: UART End Flag error." severity error;
+			report "test 1-byt transmission: UART end flag error" severity error;
 		end if;
 
 		clk <= '1';
@@ -414,7 +299,7 @@ begin
 		clk <= '0';
 		wait for INERTIAL_TIME;
 		
-		if ( bit_out != '1' ) then
+		if ( bit_out != '1' ) then
 			report "Error: continues to transmit more than one byte" severity error;
 		end if;
 
@@ -456,7 +341,7 @@ begin
       -- test that load works (multi-loads) 
       clk <= '0'; en <= '0';	-- disable device 
       load <= '0'; 
-      byte_in <= "11001100"; 
+      byte_in <= "00110011"; 
       load <= '1'; 
       wait for INERTIAL_TIME; 
       load <= '0'; 
@@ -474,15 +359,15 @@ begin
 		wait for INERTIAL_TIME;
 		clk <= '0';
 		wait for INERTIAL_TIME;
-		if ( bit_out != '1' ) then
+		if ( bit_out != '0' ) then
 		   report "test enable: UART bit 0 error." severity error;
 		end if;
 
 		clk <= '1';
-		wait for INERTIAL_TIME;Error: continues to transmit more than one byte
+		wait for INERTIAL_TIME;
 		clk <= '0';
 		wait for INERTIAL_TIME;
-		if ( bit_out != '1' ) then
+		if ( bit_out != '0' ) then
 			report "test enable: UART bit 1 error." severity error;
 		end if;
 	
@@ -490,7 +375,7 @@ begin
 		wait for INERTIAL_TIME;
 		clk <= '0';
 		wait for INERTIAL_TIME;
-		if ( bit_out != '0' ) then
+		if ( bit_out != '1' ) then
 			report "test enable: UART bit 2 error." severity error;
 		end if;
 
@@ -498,23 +383,27 @@ begin
 		wait for INERTIAL_TIME;
 		clk <= '0';
 		wait for INERTIAL_TIME;
-		if ( bit_out != '0' ) then
+		if ( bit_out != '1' ) then
 			report "test enable: UART bit 3 error." severity error;
 		end if;
 
-		clk <= '1';
+		byte_in <= "01100110";
+      load <= '1';
+      clk <= '1';
 		wait for INERTIAL_TIME;
 		clk <= '0';
 		wait for INERTIAL_TIME;
-		if ( bit_out != '1' ) then
+      load <= '0';
+		if ( bit_out != '0' ) then
 			report "test enable: UART bit 4 error." severity error;
 		end if;
+
 	
 		clk <= '1';
 		wait for INERTIAL_TIME;
 		clk <= '0';
 		wait for INERTIAL_TIME;
-		if ( bit_out != '1' ) then
+		if ( bit_out != '0' ) then
 			report "test enable: UART bit 5 error." severity error;
 		end if;
 
@@ -522,7 +411,7 @@ begin
 		wait for INERTIAL_TIME;
 		clk <= '0';
 		wait for INERTIAL_TIME;
-		if ( bit_out != '0' ) then8CR13MOV 
+		if ( bit_out != '1' ) then
 			report "test enaeble: UART bit 6 error." severity error;
 		end if;
 
@@ -530,7 +419,7 @@ begin
 		wait for INERTIAL_TIME;
 		clk <= '0';
 		wait for INERTIAL_TIME;
-		if ( bit_out != '0' ) then
+		if ( bit_out != '1' ) then
 			report "test enable: UART bit 7 error." severity error;
 		end if;
 	
@@ -542,7 +431,7 @@ begin
 			report "test enable: UART End Flag error." severity error;
 		end if;
 
-	-- test that changing byte_in when load is high continuously loads on clk edge
+      
 	-- test transmissions for accuracy (multi-transmissions) - watch for IDLE flags
 	end process
 		
