@@ -9,14 +9,16 @@ entity UART_Reg is
       BYTE_IN  : in  STD_LOGIC_VECTOR ( 7 downto 0 ); -- the data that should be transmitted
       BIT_OUT  : out STD_LOGIC;  -- 
       IDLE     : out STD_LOGIC
+      --state    : buffer integer;
+      --buff     : buffer STD_LOGIC_VECTOR ( 7 downto 0 )
    );
 end UART_Reg;
 
 architecture Behavioural of UART_Reg is
 
    -- signals & variables go here
-   signal state   : integer;  -- controls the state, should have values 0-10.
-   signal buff    : STD_LOGIC_VECTOR ( 7 downto 0 );
+   signal state   : integer := 0;  -- controls the state, should have values 0-10.
+   signal buff    : STD_LOGIC_VECTOR ( 7 downto 0 ) := "00000000";
 	signal EN_Last : STD_LOGIC; -- used to generate ENOS.
 	signal ENOS    : STD_LOGIC; -- EN One Shot.
 
@@ -40,9 +42,11 @@ begin
       -- reset to IDLE state unless ENABLE is '1' and the state is S1-S10, and its
       --    the rising edge of the CLK signal
       if ( CLK 'event and CLK = '1' ) then
-			if ( state < 10 and state > -1 and ENOS = '1' ) then
+			if ( state < 10 and state > 0 ) then
 				state <= ( state + 1 );
-			else
+			elsif ( state = 0 and ENOS = '1' ) then
+            state <= 1;
+         else
 				state <= 0;
 			end if;
 		end if;
@@ -56,12 +60,13 @@ begin
 	end Process;
 	
 	-- Generates ENOS
-	ENOS <= ( EN_Last and EN );
+	ENOS <= ( ( not EN_Last ) and EN );
 	
    -- Determine what bit to output on the BIT_OUT line
-   State_Control: Process ( state ) 
+   State_Control: Process ( state, buff ) 
    begin
       case state is
+         when     0  => BIT_OUT <= '1';      -- Idle State
          when     1  => BIT_OUT <= '0';      -- Start bit
          when     2  => BIT_OUT <= buff(0);  -- Data bit 1
          when     3  => BIT_OUT <= buff(1);  -- Data bit 2
@@ -77,9 +82,9 @@ begin
    end Process;
 
    -- on LOAD = 1, load data from BYTE_IN into the buffer (buff)
-   Load_Control: Process ( Load )
+   Load_Control: Process ( Load, state, BYTE_IN )
    begin
-      if ( Load = '1' ) THEN
+      if ( Load = '1' and state = 0 ) THEN
          buff(0) <= BYTE_IN(0);  -- Data bit 0
          buff(1) <= BYTE_IN(1);  -- Data bit 1
          buff(2) <= BYTE_IN(2);  -- Data bit 2

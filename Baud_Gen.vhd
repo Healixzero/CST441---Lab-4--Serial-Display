@@ -30,16 +30,33 @@ use IEEE.STD_LOGIC_1164.ALL;
 --use UNISIM.VComponents.all;
 
 entity Baud_Gen is
-    Generic ( Counts : integer :=  );
+    --Generic ( Counts : integer := 5208333  );
+    Generic ( Counts : integer := 10  );
 
-    Port ( Clk_In   : in  STD_LOGIC;
-           Baud_Out : in  STD_LOGIC);
+    Port ( Clk_In   : in   STD_LOGIC;
+           Baud_Out : out  STD_LOGIC);
 end Baud_Gen;
 
 architecture Behavioral of Baud_Gen is
 
-begin
+   signal count   : integer := 0;
+   signal output  : STD_LOGIC := '0';
 
+begin
+   State_counter : Process ( Clk_In, count )
+   begin
+      if ( Clk_In 'event and Clk_In = '1' ) then
+        if ( count < Counts ) then
+          count <= ( count + 1 );
+          output <= output;
+        else
+          count <= 0;
+          output <= ( not output );
+        end if;
+      end if;
+   end process;
+
+Baud_out <= output;
 
 end Behavioral;
 
